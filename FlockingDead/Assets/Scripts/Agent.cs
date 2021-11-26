@@ -112,8 +112,8 @@ public class Agent : MonoBehaviour {
         if (prey != null)
         {
             // Move towards prey.
-            //dX += TODO
-            //dY += TODO
+            dX += prey.position.x - position.x;
+            dY += prey.position.y - position.y;
         }
     }
 
