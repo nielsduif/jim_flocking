@@ -87,8 +87,8 @@ public class Agent : MonoBehaviour {
             if (a.isZombie && distance < sight)
             {
                 // Evade
-                //dX += TODO
-                //dY += TODO
+                dX += -(a.position.x - position.x);
+                dY += -(a.position.y - position.y);
             }
         }
     }
