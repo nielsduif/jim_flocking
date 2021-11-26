@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Agent : MonoBehaviour {
+public class Agent : MonoBehaviour
+{
     private static float sight = 100f;
     private static float space = 150f;
     private static float movementSpeed = 75f;
@@ -28,7 +29,7 @@ public class Agent : MonoBehaviour {
         this.boundary = boundary;
 
         isZombie = zombie;
-        
+
         sprRenderer = GetComponent<SpriteRenderer>();
 
         this.zombieSprite = zombieSprite;
@@ -112,8 +113,8 @@ public class Agent : MonoBehaviour {
         if (prey != null)
         {
             // Move towards prey.
-            //dX += TODO
-            //dY += TODO
+            dX += (prey.position.x - position.x);
+            dY += (prey.position.y - position.y);
         }
     }
 
@@ -154,7 +155,7 @@ public class Agent : MonoBehaviour {
     {
         Agent otherAgent = other.gameObject.GetComponent<Agent>();
 
-        if(otherAgent != null)
+        if (otherAgent != null)
         {
             // if im not a zombie and the other is, become a zombie
             if (otherAgent.isZombie && !this.isZombie)
