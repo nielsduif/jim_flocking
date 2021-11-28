@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Agent : MonoBehaviour
 {
@@ -23,6 +24,10 @@ public class Agent : MonoBehaviour
 
     private float separateWeight = 0, cohereWeight = .1f, alignWeight = 1;
 
+    [SerializeField]
+    static Slider sSight, sSpace, sSeparate, sCohere, sAlign;
+    List<Text> sliderText = new List<Text>();
+
     public void Initialize(bool zombie, Sprite zombieSprite, Sprite regularSprite, BoxCollider2D boundary)
     {
         position = new Vector2(Random.Range(boundary.bounds.min.x + distToBoundary, boundary.bounds.max.x - distToBoundary), Random.Range(boundary.bounds.min.y + distToBoundary, boundary.bounds.max.y - distToBoundary));
@@ -40,6 +45,60 @@ public class Agent : MonoBehaviour
             sprRenderer.sprite = zombieSprite;
         else
             sprRenderer.sprite = regularSprite;
+
+        sSight = GameObject.Find("sight").GetComponent<Slider>();
+        sSpace = GameObject.Find("space").GetComponent<Slider>();
+        sSeparate = GameObject.Find("separate").GetComponent<Slider>();
+        sCohere = GameObject.Find("cohere").GetComponent<Slider>();
+        sAlign = GameObject.Find("align").GetComponent<Slider>();
+
+        sSight.onValueChanged.AddListener(ChangeSight);
+        sSpace.onValueChanged.AddListener(ChangeSpace);
+        sSeparate.onValueChanged.AddListener(ChangeSeparate);
+        sCohere.onValueChanged.AddListener(ChangeCohere);
+        sAlign.onValueChanged.AddListener(ChangeAlign);
+
+        sliderText.Add(sSight.GetComponentInChildren<Text>());
+        sliderText[sliderText.Count - 1].text = sSight.value.ToString();
+        sliderText.Add(sSpace.GetComponentInChildren<Text>());
+        sliderText[sliderText.Count - 1].text = sSpace.value.ToString();
+        sliderText.Add(sSeparate.GetComponentInChildren<Text>());
+        sliderText[sliderText.Count - 1].text = sSeparate.value.ToString();
+        sliderText.Add(sCohere.GetComponentInChildren<Text>());
+        sliderText[sliderText.Count - 1].text = sCohere.value.ToString();
+        sliderText.Add(sAlign.GetComponentInChildren<Text>());
+        sliderText[sliderText.Count - 1].text = sAlign.value.ToString();
+
+    }
+
+    void ChangeSight(float value)
+    {
+        sight = value;
+        sliderText[0].text = sSight.value.ToString();
+    }
+
+    void ChangeSpace(float value)
+    {
+        space = value;
+        sliderText[1].text = sSpace.value.ToString();
+    }
+
+    void ChangeSeparate(float value)
+    {
+        separateWeight = value;
+        sliderText[2].text = sSeparate.value.ToString();
+    }
+
+    void ChangeCohere(float value)
+    {
+        cohereWeight = value;
+        sliderText[3].text = sCohere.value.ToString();
+    }
+
+    void ChangeAlign(float value)
+    {
+        alignWeight = value;
+        sliderText[4].text = sAlign.value.ToString();
     }
 
     public void Move(List<Agent> agents)
