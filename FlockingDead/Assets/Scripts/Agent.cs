@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Agent : MonoBehaviour
 {
-    private static float sight = 150f;
+    private static float sight = 150;
     private static float space = 100f;
     private static float movementSpeed = 75f;
     private static float rotateSpeed = 3f;
@@ -22,11 +22,8 @@ public class Agent : MonoBehaviour
 
     private Sprite zombieSprite;
 
-    private float separateWeight = 0, cohereWeight = .1f, alignWeight = 1;
-
     [SerializeField]
-    static Slider sSight, sSpace, sSeparate, sCohere, sAlign;
-    List<Text> sliderText = new List<Text>();
+    static float separateWeight, cohereWeight, alignWeight;
 
     public void Initialize(bool zombie, Sprite zombieSprite, Sprite regularSprite, BoxCollider2D boundary)
     {
@@ -45,66 +42,37 @@ public class Agent : MonoBehaviour
             sprRenderer.sprite = zombieSprite;
         else
             sprRenderer.sprite = regularSprite;
-
-        sSight = GameObject.Find("sight").GetComponent<Slider>();
-        sSpace = GameObject.Find("space").GetComponent<Slider>();
-        sSeparate = GameObject.Find("separate").GetComponent<Slider>();
-        sCohere = GameObject.Find("cohere").GetComponent<Slider>();
-        sAlign = GameObject.Find("align").GetComponent<Slider>();
-
-        sSight.onValueChanged.AddListener(ChangeSight);
-        sSpace.onValueChanged.AddListener(ChangeSpace);
-        sSeparate.onValueChanged.AddListener(ChangeSeparate);
-        sCohere.onValueChanged.AddListener(ChangeCohere);
-        sAlign.onValueChanged.AddListener(ChangeAlign);
-
-        sliderText.Add(sSight.GetComponentInChildren<Text>());
-        sliderText[sliderText.Count - 1].text = sSight.value.ToString();
-        sliderText.Add(sSpace.GetComponentInChildren<Text>());
-        sliderText[sliderText.Count - 1].text = sSpace.value.ToString();
-        sliderText.Add(sSeparate.GetComponentInChildren<Text>());
-        sliderText[sliderText.Count - 1].text = sSeparate.value.ToString();
-        sliderText.Add(sCohere.GetComponentInChildren<Text>());
-        sliderText[sliderText.Count - 1].text = sCohere.value.ToString();
-        sliderText.Add(sAlign.GetComponentInChildren<Text>());
-        sliderText[sliderText.Count - 1].text = sAlign.value.ToString();
-
     }
 
-    void ChangeSight(float value)
+    public void ChangeSight(float value)
     {
         sight = value;
-        sliderText[0].text = sSight.value.ToString();
     }
 
-    void ChangeSpace(float value)
+    public void ChangeSpace(float value)
     {
         space = value;
-        sliderText[1].text = sSpace.value.ToString();
     }
 
-    void ChangeSeparate(float value)
+    public void ChangeSeparate(float value)
     {
         separateWeight = value;
-        sliderText[2].text = sSeparate.value.ToString();
     }
 
-    void ChangeCohere(float value)
+    public void ChangeCohere(float value)
     {
         cohereWeight = value;
-        sliderText[3].text = sCohere.value.ToString();
     }
 
-    void ChangeAlign(float value)
+    public void ChangeAlign(float value)
     {
         alignWeight = value;
-        sliderText[4].text = sAlign.value.ToString();
     }
 
     public void Move(List<Agent> agents)
     {
         //Agents flock, zombie's hunt 
-        if (!isZombie) Flock(agents, separateWeight, cohereWeight, alignWeight);
+        if (!isZombie) Flock(agents);
         else Hunt(agents);
         CheckBounds();
         CheckSpeed();
@@ -120,7 +88,7 @@ public class Agent : MonoBehaviour
         transform.position = position;
     }
 
-    private void Flock(List<Agent> agents, float _separateWeight, float _cohereWeight, float _alignWeight)
+    private void Flock(List<Agent> agents)
     {
         foreach (Agent a in agents)
         {
@@ -130,14 +98,14 @@ public class Agent : MonoBehaviour
                 if (distance < space)
                 {
                     // Separation
-                    dX += (position.x - a.position.x) * _separateWeight;
-                    dY += (position.y - a.position.y) * _separateWeight;
+                    dX += (position.x - a.position.x) * separateWeight;
+                    dY += (position.y - a.position.y) * separateWeight;
                 }
                 else if (distance < sight)
                 {
                     // Cohesion
-                    dX += (a.position.x - position.x) * _cohereWeight;
-                    dY += (a.position.y - position.y) * _cohereWeight;
+                    dX += (a.position.x - position.x) * cohereWeight;
+                    dY += (a.position.y - position.y) * cohereWeight;
                 }
                 if (distance < sight)
                 {
