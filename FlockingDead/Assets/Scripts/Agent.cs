@@ -7,7 +7,7 @@ public class Agent : MonoBehaviour
 {
     private static float sight = 150;
     private static float space = 100f;
-    private static float movementSpeed = 75f;
+    private static float movementSpeed = 200;
     private static float rotateSpeed = 3f;
     private static float distToBoundary = 100f;
 
@@ -23,7 +23,7 @@ public class Agent : MonoBehaviour
     private Sprite zombieSprite;
 
     [SerializeField]
-    static float separateWeight, cohereWeight, alignWeight;
+    static float separateWeight = 1, cohereWeight = 1, alignWeight = 1;
 
     public void Initialize(bool zombie, Sprite zombieSprite, Sprite regularSprite, BoxCollider2D boundary)
     {
@@ -72,8 +72,8 @@ public class Agent : MonoBehaviour
     public void Move(List<Agent> agents)
     {
         //Agents flock, zombie's hunt 
-        if (!isZombie) Flock(agents);
-        else Hunt(agents);
+        if (!isZombie) Hunt(agents);
+        else Flock(agents);
         CheckBounds();
         CheckSpeed();
 
@@ -90,9 +90,11 @@ public class Agent : MonoBehaviour
 
     private void Flock(List<Agent> agents)
     {
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         foreach (Agent a in agents)
         {
             float distance = Distance(position, a.position);
+            float distanceMouse = Distance(position, worldPosition);
             if (a != this && !a.isZombie)
             {
                 if (distance < space)
@@ -119,6 +121,11 @@ public class Agent : MonoBehaviour
                 // Evade
                 dX += (position.x - a.position.x);
                 dY += (position.y - a.position.y);
+            }
+            if (distanceMouse < sight)
+            {
+                dX += (position.x - worldPosition.x);
+                dY += (position.y - worldPosition.y);
             }
         }
     }
@@ -170,7 +177,7 @@ public class Agent : MonoBehaviour
     {
         float s;
         if (!isZombie) s = movementSpeed * Time.deltaTime;
-        else s = movementSpeed / 3f * Time.deltaTime; //Zombies are slower
+        else s = movementSpeed / 2 * Time.deltaTime; //Zombies are slower
 
         float val = Distance(Vector2.zero, new Vector2(dX, dY));
         if (val > s)
